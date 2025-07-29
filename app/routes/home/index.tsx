@@ -1,16 +1,33 @@
+import type { Project } from '~/types';
 import type { Route } from './+types/index';
+import FeaturedProjects from '~/components/FeaturedProjects';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'The Friendly Dev | Welcome' },
+    { title: 'Cozy Syntax | Welcome' },
     { name: 'description', content: 'Custom website development' },
   ];
 }
 
-export default function Home() {
+export const loader = async ({
+  request,
+}: Route.LoaderArgs): Promise<{ projects: Project[] }> => {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/projects`);
+  const data = await res.json();
+
+  return {
+    projects: data,
+  };
+};
+
+const HomePage = ({ loaderData }: Route.ComponentProps) => {
+  const { projects } = loaderData;
+
   return (
     <>
-      Home page
+      <FeaturedProjects projects={projects} count={2} />
     </>
   );
-}
+};
+
+export default HomePage;

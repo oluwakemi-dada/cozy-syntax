@@ -25,7 +25,7 @@ const Pagination = ({
       {Array.from({ length: totalPages }, (_, index) => (
         <button
           key={index + 1}
-          onClick={() => onPageChange({ page: index + 1 })}
+          onClick={() => onPageChange(index + 1)}
           className={`px-3 py-1 cursor-pointer rounded ${
             currentPage === index + 1
               ? 'bg-blue-600 text-white'

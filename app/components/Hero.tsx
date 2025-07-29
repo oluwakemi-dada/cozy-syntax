@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 
 type HeroProps = {
   name: string;
-  text: string;
+  text?: string;
 };
 
 const Hero = ({
