@@ -11,6 +11,7 @@ export const loader = async ({
     `${import.meta.env.VITE_API_URL}/projects/${params.id}`
   );
 
+
   if (!res.ok) throw new Response('Project not found', { status: 404 });
 
   const project: Project = await res.json();
