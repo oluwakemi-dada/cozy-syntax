@@ -41,8 +41,8 @@ const ProjectDetailsPage = ({ loaderData }: { loaderData: Project }) => {
             {project.title}
           </h1>
           <p className='text-gray-300 text-sm mb-4'>
-            {/* {new Date(project.date).toLocaleDateString()} • {project.category} */}
-            {project.date} • {project.category}
+            {new Date(project.date).toLocaleDateString('en-GB')} •{' '}
+            {project.category}
           </p>
           <p className='text-gray-200 mb-6'>{project.description}</p>
 
