@@ -23,7 +23,7 @@ const BlogPage = ({ loaderData }: Route.ComponentProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get('page') || '1');
-  const postsPerPage = 3;
+  const postsPerPage = 10;
 
   const { posts } = loaderData;
 
