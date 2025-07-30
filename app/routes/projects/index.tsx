@@ -1,5 +1,5 @@
-import { useSearchParams } from 'react-router';
-import type { Project } from '~/types';
+import { useState } from 'react';
+import type { Project, StrapiProject, StrapiResponse } from '~/types';
 import type { Route } from './+types';
 import { AnimatePresence, motion } from 'framer-motion';
 import ProjectCard from '~/components/ProjectCard';
@@ -15,16 +15,32 @@ export function meta({}: Route.MetaArgs) {
 export const loader = async ({
   request,
 }: Route.LoaderArgs): Promise<{ projects: Project[] }> => {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/projects`);
-  const data = await res.json();
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/projects?populate=*`
+  );
+  const json: StrapiResponse<StrapiProject> = await res.json();
 
-  return { projects: data };
+  const projects = json.data.map((item) => ({
+    id: item.id,
+    documentId: item.documentId,
+    title: item.title,
+    description: item.description,
+    image: item.image?.url
+      ? `${import.meta.env.VITE_STRAPI_URL}${item.image.url}`
+      : '/images/no-image.png',
+    url: item.url,
+    date: item.date,
+    category: item.category,
+    featured: item.featured,
+  }));
+
+  return { projects };
 };
 
 const ProjectsPage = ({ loaderData }: Route.ComponentProps) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = parseInt(searchParams.get('page') || '1');
-  const category = searchParams.get('category') || 'All';
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const projectsPerPage = 2;
 
   const { projects } = loaderData as { projects: Project[] };
 
@@ -34,49 +50,39 @@ const ProjectsPage = ({ loaderData }: Route.ComponentProps) => {
     ...new Set(projects.map((project) => project.category)),
   ];
 
-  // Filter projects by category
+  // Filter project based on the category
   const filteredProjects =
-    category === 'All'
+    selectedCategory === 'All'
       ? projects
-      : projects.filter((project) => project.category === category);
+      : projects.filter((project) => project.category === selectedCategory);
 
-  const projectsPerPage = 10;
+  // Calculate total pages
   const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
 
-  // Get current page projects
+  // Get current pages projects
   const indexOfLast = currentPage * projectsPerPage;
   const indexOfFirst = indexOfLast - projectsPerPage;
   const currentProjects = filteredProjects.slice(indexOfFirst, indexOfLast);
-
-  const updatePage = (newPage: string) => {
-    setSearchParams((prev) => {
-      const params = new URLSearchParams(prev);
-      params.set('page', newPage);
-      return params;
-    });
-  };
-
-  const updateCategory = (newCategory: string) => {
-    setSearchParams((prev) => {
-      const params = new URLSearchParams(prev);
-      params.set('category', newCategory);
-      params.set('page', '1'); // reset to first page when filter changes
-      return params;
-    });
-  };
 
   return (
     <>
       <h2 className='text-3xl text-white font-bold mb-8'>🚀 Projects</h2>
 
       <div className='flex flex-wrap gap-2 mb-8'>
-        {categories.map((curCategory) => (
+        {categories.map((category) => (
           <button
-            key={curCategory}
-            onClick={() => updateCategory(curCategory)}
-            className={`px-3 py-1 rounded text-sm cursor-pointer ${curCategory === category ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-200'}`}
+            key={category}
+            onClick={() => {
+              setSelectedCategory(category);
+              setCurrentPage(1);
+            }}
+            className={`px-3 py-1 rounded text-sm cursor-pointer ${
+              selectedCategory === category
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-700 text-gray-200'
+            }`}
           >
-            {curCategory}
+            {category}
           </button>
         ))}
       </div>
@@ -94,7 +100,7 @@ const ProjectsPage = ({ loaderData }: Route.ComponentProps) => {
       <Pagination
         totalPages={totalPages}
         currentPage={currentPage}
-        onPageChange={updatePage}
+        onPageChange={setCurrentPage}
       />
     </>
   );
