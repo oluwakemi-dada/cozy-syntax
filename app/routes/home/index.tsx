@@ -1,6 +1,6 @@
 import type { Project, StrapiProject, StrapiResponse } from '~/types';
 import type { Route } from './+types/index';
-import type { PostMeta } from '~/types';
+import type { Post } from '~/types';
 import FeaturedProjects from '~/components/FeaturedProjects';
 import AboutPreview from '~/components/AboutPreview';
 import LatestPosts from '~/components/LatestPosts';
@@ -14,7 +14,7 @@ export function meta({}: Route.MetaArgs) {
 
 export const loader = async ({
   request,
-}: Route.LoaderArgs): Promise<{ projects: Project[]; posts: PostMeta[] }> => {
+}: Route.LoaderArgs): Promise<{ projects: Project[]; posts: Post[] }> => {
   const url = new URL(request.url);
 
   const [projectRes, postRes] = await Promise.all([

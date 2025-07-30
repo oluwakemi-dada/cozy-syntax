@@ -40,7 +40,7 @@ export const loader = async ({
 const ProjectsPage = ({ loaderData }: Route.ComponentProps) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
-  const projectsPerPage = 2;
+  const projectsPerPage = 10;
 
   const { projects } = loaderData as { projects: Project[] };
 
