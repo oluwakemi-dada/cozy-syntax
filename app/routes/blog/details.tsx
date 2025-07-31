@@ -28,9 +28,7 @@ export const loader = async ({
     title: item.title,
     date: item.date,
     body: item.body,
-    image: item.image?.url
-      ? `${import.meta.env.VITE_STRAPI_URL}${item.image.url}`
-      : '/images/no-image.png',
+    image: item.image?.url ? `${item.image.url}` : '/images/no-image.png',
   };
 
   return {

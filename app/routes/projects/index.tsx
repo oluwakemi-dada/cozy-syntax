@@ -25,9 +25,7 @@ export const loader = async ({
     documentId: item.documentId,
     title: item.title,
     description: item.description,
-    image: item.image?.url
-      ? `${import.meta.env.VITE_STRAPI_URL}${item.image.url}`
-      : '/images/no-image.png',
+    image: item.image?.url ? `${item.image.url}` : '/images/no-image.png',
     url: item.url,
     date: item.date,
     category: item.category,
@@ -40,7 +38,7 @@ export const loader = async ({
 const ProjectsPage = ({ loaderData }: Route.ComponentProps) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
-  const projectsPerPage = 10;
+  const projectsPerPage = 6;
 
   const { projects } = loaderData as { projects: Project[] };
 
